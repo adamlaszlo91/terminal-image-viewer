@@ -2,12 +2,16 @@ import sys
 import numpy as np
 from PIL import Image, ImageOps
 
+value_to_character_map = '█$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,"^`\' '
+
 
 def image_to_text(image: np.ndarray) -> str:
     text = ''
     for i in range(image.shape[0]):
         for k in range(image.shape[1]):
-            text += "█" if image[i][k] > 0 else ' '
+            greyscale_value = image[i][k]
+            text += value_to_character_map[int(
+                greyscale_value * (len(value_to_character_map) / 255.0))-1]
         text += '\n'
     return text
 
@@ -23,7 +27,7 @@ def main() -> None:
         print('Please provide a valid image path.')
         return
 
-    image = image.convert('1')
+    image = image.convert('L')
     image = ImageOps.contain(image, (80, 80))
     image = image.resize((80, image.height // 2))
     image_array = np.asarray(image)
