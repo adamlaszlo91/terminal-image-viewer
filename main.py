@@ -2,17 +2,17 @@ import sys
 import numpy as np
 from PIL import Image, ImageOps
 
-value_to_character_map = '█$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,"^`\' '[::-1]
+ascii_chars = '█$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,"^`\' '[::-1]
 
 
 def image_to_text(image: np.ndarray) -> str:
     text = ''
     for i in range(image.shape[0]):
+        text += '\n'
         for k in range(image.shape[1]):
             greyscale_value = image[i][k]
-            text += value_to_character_map[int(
-                (len(value_to_character_map) - 1) * (greyscale_value / 255))]
-        text += '\n'
+            char_index = int((greyscale_value / 256) * (len(ascii_chars) ))
+            text += ascii_chars[char_index]
     return text
 
 
@@ -33,7 +33,7 @@ def main() -> None:
     image_array = np.asarray(image)
 
     image_as_text = image_to_text(image_array)
-    print(image_as_text)
+    print(image_as_text, flush=True)
 
 
 if __name__ == '__main__':
